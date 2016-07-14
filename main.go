@@ -3,7 +3,13 @@ package main
 import (
   "time"
   "sync"
+  "github.com/jinzhu/gorm"
+  _ "github.com/jinzhu/gorm/dialects/mysql"
 )
+
+type Ticket struct {
+  gorm.Model
+}
 
 type TicketUpdate struct {
   ID          int
@@ -14,8 +20,14 @@ type TicketUpdate struct {
 var wg sync.WaitGroup
 
 func worker(updatesChannel chan<- *TicketUpdate, doneChannel <-chan int, limiter *Limiter) {
+  fiveMinTick := time.NewTicker(time.Minute * 5)
+  oneHourTick := time.NewTicker(time.Hour * 1)
+  oneDayTick := time.NewTicker(time.Day * 1)
   for {
     select {
+      case <- fiveMinTick.C:
+        // Select from DB new tickets
+        go processRequest(ticket
       case <- doneChannel:
         defer(wg.Done())
         return
@@ -25,8 +37,8 @@ func worker(updatesChannel chan<- *TicketUpdate, doneChannel <-chan int, limiter
 
 func processUpdates(updatesChannel <-chan *TicketUpdate, doneChannel <-chan int) {
   ticker := time.NewTicker(time.Millisecond * 500)
+  tickets = make(map[int][]*TicketUpdate)
   for {
-    tickets = make(map[int][]*TicketUpdate)
     select {
       case tu <- updatesChannel:
         tickets = append(tickets[tu.AccID], tu)
