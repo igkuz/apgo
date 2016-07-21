@@ -15,7 +15,7 @@ type Account struct {
 	GaQuotaUser    string
 	GaRefreshToken string
 	Active         bool     `sql:"DEFAULT:true"`
-	Ticket         []Ticket `gorm:"ForeignKey:AccountExtId"`
+	Tickets         []Ticket `gorm:"ForeignKey:AccountExtId"`
 }
 
 type Ticket struct {

@@ -7,9 +7,6 @@ import (
   _ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type Ticket struct {
-  gorm.Model
-}
 
 type TicketUpdate struct {
   ID          int
@@ -19,13 +16,16 @@ type TicketUpdate struct {
 
 var wg sync.WaitGroup
 
-func worker(updatesChannel chan<- *TicketUpdate, doneChannel <-chan int, limiter *Limiter) {
+func worker(ID int, updatesChannel chan<- *TicketUpdate, doneChannel <-chan int, limiter *Limiter) {
+  log.Println("Worker for AccountID: " ID, " stared...")
   fiveMinTick := time.NewTicker(time.Minute * 5)
-  oneHourTick := time.NewTicker(time.Hour * 1)
-  oneDayTick := time.NewTicker(time.Day * 1)
+  log.Println("5 min ticker stared: " time.Now())
+  //oneHourTick := time.NewTicker(time.Hour * 1)
+  //oneDayTick := time.NewTicker(time.Day * 1)
   for {
     select {
       case <- fiveMinTick.C:
+        log.Println("Worker: ", ID, " start processing 5 min queue...")
         // Select from DB new tickets
         go processRequest(ticket
       case <- doneChannel:
@@ -33,6 +33,9 @@ func worker(updatesChannel chan<- *TicketUpdate, doneChannel <-chan int, limiter
         return
     }
   }
+}
+
+func processRequest(accID int, updates chan<- *TicketUpdate, done <- chan int) {
 }
 
 func processUpdates(updatesChannel <-chan *TicketUpdate, doneChannel <-chan int) {
@@ -60,7 +63,9 @@ func main() {
   done := make(chan int)
   updates := make(chan *TicketUpdate, 200)
   // on recieve command createAccount we should create worker for it
-  go worker(updates, done, limiter)
+  // accLimit, glob2SecLimit, globDayLimit
+  wg.Add(1)
+  go worker(accId, updates, done, accLimit, glob2SecLimit)
   wg.Add(1)
   go processUpdates(updates, done)
   wg.Wait()

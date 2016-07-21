@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
+  "time"
 )
 
 func main() {
@@ -15,6 +16,17 @@ func main() {
 		db.AutoMigrate(m.Account{}, m.Ticket{})
 		log.Println("Migration complete.")
 
+    tickets := []m.Ticket{}
+    for i:=1; i <= 10; i++ {
+      t := m.Ticket{
+        ExtId: i,
+        PublishedAt:   time.Now(),
+        Url: "http://google.com",
+        Active: true,
+        GaPageViews: 0,
+      }
+      tickets = append(tickets, t)
+    }
 		acc := m.Account{
 			ExtId:          1,
 			Name:           "Test account",
@@ -22,6 +34,7 @@ func main() {
 			GaViewId:       "1",
 			GaQuotaUser:    "1",
 			GaRefreshToken: "456",
+      Tickets: tickets,
 		}
 		db.Create(&acc)
 
