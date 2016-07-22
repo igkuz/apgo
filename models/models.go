@@ -39,6 +39,7 @@ type AccJoinTicket struct {
   ExtId               int
   Url                 string
   PublishedAt         time.Time
+  GaPageViews         int
 }
 
 func (ajt AccJoinTicket) String() string {
@@ -46,6 +47,7 @@ func (ajt AccJoinTicket) String() string {
     return "AccJoinTicket: {" + 
         fmt.Sprintf("TicketId: %v, ", ajt.ExtId) +
         fmt.Sprintf("Url: %v, ", ajt.Url) +
+        fmt.Sprintf("GaPageViews: %v, ", ajt.GaPageViews) +
         fmt.Sprintf("PublishedAt: %v, ", ajt.PublishedAt) +
         fmt.Sprintf("AccId: %v, ", ajt.AccId) +
         fmt.Sprintf("GaAccessToken: %v, ", ajt.GaAccessToken) +
