@@ -15,15 +15,10 @@ type appContext struct {
   //glob100SecLimit    *Limiter
 }
 
-type TicketUpdate struct {
-  Id          int
-  AccId       int
-  PageViews   int
-}
 
 var wg sync.WaitGroup
 
-func worker(ID int, context *appContext, updatesChannel chan<- *TicketUpdate, doneChannel <-chan int) {
+func worker(ID int, context *appContext, updatesChannel chan<- *m.TicketUpdate, doneChannel <-chan int) {
   ln := log.Println
   ln("Worker for AccountID: ", ID, " stared...")
   fiveMinTick := time.NewTicker(time.Second * 3)
@@ -52,7 +47,7 @@ func worker(ID int, context *appContext, updatesChannel chan<- *TicketUpdate, do
 func getAnalytics(ticket *m.AccJoinTicket, updatesChannel chan<- *TicketUpdate) {
     log.Println("Doing some job...")
     time.Sleep(time.Millisecond*100)
-    tu := &TicketUpdate{
+    tu := &m.TicketUpdate{
       Id: ticket.ExtId,
       AccId: ticket.AccId,
       PageViews: ticket.GaPageViews + 1,
@@ -62,9 +57,9 @@ func getAnalytics(ticket *m.AccJoinTicket, updatesChannel chan<- *TicketUpdate) 
     defer wg.Done()
 }
 
-func processUpdates(updatesChannel <-chan *TicketUpdate, doneChannel <-chan int) {
+func processUpdates(updatesChannel <-chan *m.TicketUpdate, doneChannel <-chan int) {
   ticker := time.NewTicker(time.Millisecond * 1000)
-  tickets := make(map[int][]*TicketUpdate)
+  tickets := make(map[int][]*m.TicketUpdate)
   for {
     select {
       case tu := <- updatesChannel:
@@ -85,7 +80,7 @@ func processUpdates(updatesChannel <-chan *TicketUpdate, doneChannel <-chan int)
 
 func main() {
   done := make(chan int)
-  updates := make(chan *TicketUpdate, 200)
+  updates := make(chan *m.TicketUpdate, 200)
   db, err := gorm.Open("mysql", "root:123@/sgap_development?parseTime=true")
   if err != nil {
     log.Println("Error while connecting to DB: ", err)

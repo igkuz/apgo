@@ -30,6 +30,12 @@ type Ticket struct {
 	GaPageViews  int
 }
 
+type TicketUpdate struct {
+  Id          int
+  AccId       int
+  PageViews   int
+}
+
 type AccJoinTicket struct {
   AccId               int
   GaAccessToken       string
