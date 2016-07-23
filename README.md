@@ -1,2 +1,2 @@
 # ap-go
-System analytics parsing written in GO
+Parser for analytics systems written in GO
