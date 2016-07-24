@@ -49,7 +49,7 @@ type AccJoinTicket struct {
 }
 
 func (ajt AccJoinTicket) String() string {
-  
+
     return "AccJoinTicket: {" + 
         fmt.Sprintf("TicketId: %v, ", ajt.ExtId) +
         fmt.Sprintf("Url: %v, ", ajt.Url) +
