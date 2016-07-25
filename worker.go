@@ -37,8 +37,8 @@ func Worker(context *AppContext, ID int, updates chan<- *m.TicketUpdate, done <-
 			for _, t := range result {
 				log.Println("Processing ticket: ", t)
 			}
-    case <-done:
-      lf("Done signal catched. Stopping worker: %v.\n", ID)
+		case <-done:
+			lf("Done signal catched. Stopping worker: %v.\n", ID)
 		}
 	}
 }
