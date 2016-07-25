@@ -1,12 +1,12 @@
 package apgo
 
 import (
-    "github.com/jinzhu/gorm"
-    "sync"
+	"github.com/jinzhu/gorm"
+	"sync"
 )
 
 type AppContext struct {
-  DB        *gorm.DB
-  Config    *APConfig
-  Wg        sync.WaitGroup
+	DB     *gorm.DB
+	Config *APConfig
+	Wg     sync.WaitGroup
 }
