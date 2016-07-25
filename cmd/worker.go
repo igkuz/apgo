@@ -12,11 +12,6 @@ import (
   "sync"
 )
 
-type appContext struct {
-  DB        *gorm.DB
-  config    *apgo.APConfig
-}
-
 func main() {
   if os.Getenv("APP_ENV") == "" {
     os.Setenv("APP_ENV", "development")
@@ -38,11 +33,10 @@ func main() {
 
   updates := make(chan *m.TicketUpdate, 200)
   done := make(chan int)
-  for i:=1; i<=3; i++ {
-    context.Wg.Add(1)
-    go apgo.Worker(context, i, updates, done)
-  }
-  time.Sleep(time.Second * 2)
+  context.Wg.Add(1)
+  go apgo.Worker(context, 1, updates, done)
+  go apgo.ProcessUpdates(context, updates, done)
+  time.Sleep(time.Minute * 3)
   close(updates)
   close(done)
   context.Wg.Wait()
