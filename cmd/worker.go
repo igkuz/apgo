@@ -2,13 +2,15 @@ package main
 
 import (
   "github.com/igkuz/apgo"
-  //m "github.com/igkuz/apgo/models"
+  m "github.com/igkuz/apgo/models"
+  //w "github.com/igkuz/apgo/worker"
 
   "github.com/jinzhu/gorm"
   _ "github.com/jinzhu/gorm/dialects/mysql"
 
   "log"
   "os"
+  "time"
 )
 
 type appContext struct {
@@ -28,8 +30,15 @@ func main() {
     log.Fatalf("Error while connecting to DB: %v", err)
   }
 
-  context := &appContext{
+  context := &apgo.AppContext{
       DB: db,
-      config: config,
+      Config: config,
   }
+  
+  updates := make(chan *m.TicketUpdate, 200)
+  done := make(chan int)
+  go apgo.Worker(context, 1, updates, done)
+  time.Sleep(time.Minute * 2)
+  close(updates)
+  close(done)
 }
