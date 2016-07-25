@@ -20,6 +20,7 @@ func getSelectString() string {
 }
 
 func Worker(context *AppContext, ID int, updates chan<- *m.TicketUpdate, done <-chan int) {
+  defer context.Wg.Done()
 	lf := log.Printf
 
 	lf("Worker for AccountID: %v started.\n", ID)
@@ -36,9 +37,24 @@ func Worker(context *AppContext, ID int, updates chan<- *m.TicketUpdate, done <-
 			log.Printf("Selected tickets: %#v", result)
 			for _, t := range result {
 				log.Println("Processing ticket: ", t)
+        context.Wg.Add(1)
+        go processAnalytics(context, t, updates, done)
 			}
 		case <-done:
 			lf("Done signal catched. Stopping worker: %v.\n", ID)
+      return
 		}
 	}
+}
+
+func processAnalytics(context *AppContext, ticket *AccJoinTicket, updates chan<- *m.TicketUpdate, done <-chan int) {
+  defer context.Wg.Done()
+
+  for {
+    select {
+    case <-done:
+      lf("Done signal catched. Stopping processAnalytics for ticket: %v.\n", ticket.ExtId)
+      return
+    }
+  }
 }
