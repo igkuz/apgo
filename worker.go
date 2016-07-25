@@ -69,6 +69,7 @@ func ProcessUpdates(context *AppContext, updates <-chan *m.TicketUpdate, done <-
         log.Println("Cleared tickets map: ", tickets)
         // send values to API
     case <- done:
+        log.Println("Done signal catched. Stopping processing updates.")
         return
     }
   }
